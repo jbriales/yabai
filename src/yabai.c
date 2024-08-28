@@ -335,11 +335,17 @@ int main(int argc, char **argv)
 
     exec_config_file(g_config_file, sizeof(g_config_file));
 
+    uint64_t timer_freq = read_cpu_freq();
+    
     for (;;) {
+        uint64_t start_time = read_cpu_timer();
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         CFRunLoopRunResult result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 300, true);
+        uint64_t end_time = read_cpu_timer();
+        double elapsed_time = (double)(end_time - start_time) / timer_freq;
+        printf("Loop execution time: %f seconds\n", elapsed_time);
         [pool drain];
-
+    
         if (result == kCFRunLoopRunFinished || result == kCFRunLoopRunStopped) break;
     }
 

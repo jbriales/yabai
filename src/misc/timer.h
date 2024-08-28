@@ -75,6 +75,8 @@ static void profile_end_and_print(void)
     uint64_t timer_freq = read_cpu_freq();
 
     uint64_t total_tsc_elapsed = g_profiler.end_tsc - g_profiler.begin_tsc;
+    // printf("%s: Start tsc: %llu\n", __FUNCTION__, g_profiler.begin_tsc);
+    // printf("%s: End tsc: %llu\n", __FUNCTION__, g_profiler.end_tsc);
     printf("Total time: %0.4fms (timer freq %llu)\n", 1000.0 * (double)total_tsc_elapsed / (double)timer_freq, timer_freq);
 
     for (int i = 0; i < array_count(g_profiler.anchors); ++i) {

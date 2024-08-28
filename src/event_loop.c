@@ -1069,7 +1069,7 @@ static EVENT_HANDLER(MOUSE_DRAGGED)
     }
 
     CGPoint point = CGEventGetLocation(context);
-    debug("%s: %.2f, %.2f\n", __FUNCTION__, point.x, point.y);
+    // debug("%s: %.2f, %.2f\n", __FUNCTION__, point.x, point.y);
 
     if (g_mouse_state.current_action == MOUSE_MODE_MOVE) {
         CGPoint new_point = { g_mouse_state.window_frame.origin.x + (point.x - g_mouse_state.down_location.x),
@@ -1489,8 +1489,23 @@ static void *event_loop_run(void *context)
         }
 
 empty:
-        [pool drain];
-        sem_wait(event_loop->semaphore);
+
+        {
+            uint64_t timer_freq = read_os_freq();
+            uint64_t start_time = read_os_timer();
+            [pool drain];
+            uint64_t end_time = read_os_timer();
+            double elapsed_time = (double)(end_time - start_time) / timer_freq;
+            printf("PROFILE %s; [pool drain]; %f ms\n", __FUNCTION__, elapsed_time * 1000);
+        }
+        {
+            uint64_t timer_freq = read_os_freq();
+            uint64_t start_time = read_os_timer();
+            sem_wait(event_loop->semaphore);
+            uint64_t end_time = read_os_timer();
+            double elapsed_time = (double)(end_time - start_time) / timer_freq;
+            printf("PROFILE %s; sem_wait(event_loop->semaphore); %f ms\n", __FUNCTION__, elapsed_time * 1000);
+        }
     }
 
     return NULL;
