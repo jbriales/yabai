@@ -506,6 +506,8 @@ static void window_manager_destroy_window_proxy(int animation_connection, struct
 
 static void *window_manager_build_window_proxy_thread_proc(void *data)
 {
+    pthread_setname_np("window_manager_build_window_proxy");
+
     struct window_animation *animation = data;
 
     float alpha = 1.0f;

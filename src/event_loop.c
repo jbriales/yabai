@@ -1461,6 +1461,8 @@ static EVENT_HANDLER(DAEMON_MESSAGE)
 
 static void *event_loop_run(void *context)
 {
+    pthread_setname_np("event_loop");
+
     struct event *head, *next;
     struct event_loop *event_loop = context;
 

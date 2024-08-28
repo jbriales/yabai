@@ -2941,6 +2941,8 @@ void handle_message(FILE *rsp, char *message)
 #pragma clang diagnostic ignored "-Wunused-parameter"
 static void *message_loop_run(void *context)
 {
+    pthread_setname_np("message_loop");
+
     while (g_message_loop.is_running) {
         int sockfd = accept(g_message_loop.sockfd, NULL, 0);
         if (sockfd == -1) continue;

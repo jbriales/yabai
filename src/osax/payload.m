@@ -669,6 +669,8 @@ static void do_window_opacity(char *message)
 
 static void *window_fade_thread_proc(void *data)
 {
+    pthread_setname_np("window_fade");
+    
 entry:;
     struct window_fade_context *context = (struct window_fade_context *) data;
     context->skip  = false;
@@ -1033,6 +1035,8 @@ static inline bool read_message(int sockfd, char *message)
 
 static void *handle_connection(void *unused)
 {
+    pthread_setname_np("handle_connection");
+
     for (;;) {
         int sockfd = accept(daemon_sockfd, NULL, 0);
         if (sockfd == -1) continue;
