@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/bin/yabai",
       "processId": "${command:pickProcess}",
       "MIMode": "lldb"
-    }
-
+    },
+    {"name":"Python Debugger: Current File","type":"debugpy","request":"launch","program":"${file}","console":"integratedTerminal"},
   ]
 }
