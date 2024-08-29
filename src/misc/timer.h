@@ -63,6 +63,26 @@ static inline uint64_t read_cpu_freq(void)
 #endif
 }
 
+struct simple_profile
+{
+    char const *label;
+    uint64_t start_timestamp;
+    uint64_t final_timestamp;
+};
+
+static void begin_simple_profile(struct simple_profile *profile, char const *label)
+{
+    profile->label = label;
+    profile->start_timestamp = read_cpu_timer();
+}
+
+static void end_simple_profile_and_print(struct simple_profile *profile, char const *function_name)
+{
+    profile->final_timestamp = read_cpu_timer();
+    uint64_t timer_freq = read_cpu_freq();
+    printf("PROFILE | %s | %s | %0.4fms\n", function_name, profile->label, 1000.0 * (double)(profile->final_timestamp - profile->start_timestamp) / (double)timer_freq);
+}
+
 static void profile_begin(void)
 {
     memset(&g_profiler, 0, sizeof(g_profiler));

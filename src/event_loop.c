@@ -1466,10 +1466,19 @@ static void *event_loop_run(void *context)
     struct event *head, *next;
     struct event_loop *event_loop = context;
 
+    NSAutoreleasePool *pool;
+
     while (event_loop->is_running) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        {
+            struct simple_profile profile_data;
+            begin_simple_profile(&profile_data, "pool alloc");
+            pool = [[NSAutoreleasePool alloc] init];
+            end_simple_profile_and_print(&profile_data, __func__);
+        }
 
         for (;;) {
+            struct simple_profile profile_data;
+            begin_simple_profile(&profile_data, "loop body");
             profile_begin();
 
             do {
@@ -1488,25 +1497,22 @@ static void *event_loop_run(void *context)
             ts_reset();
 
             profile_end_and_print();
+            end_simple_profile_and_print(&profile_data, __func__);
         }
 
 empty:
 
         {
-            uint64_t timer_freq = read_os_freq();
-            uint64_t start_time = read_os_timer();
+            struct simple_profile profile_data;
+            begin_simple_profile(&profile_data, "pool drain");
             [pool drain];
-            uint64_t end_time = read_os_timer();
-            double elapsed_time = (double)(end_time - start_time) / timer_freq;
-            printf("PROFILE %s; [pool drain]; %f ms\n", __FUNCTION__, elapsed_time * 1000);
+            end_simple_profile_and_print(&profile_data, __func__);
         }
         {
-            uint64_t timer_freq = read_os_freq();
-            uint64_t start_time = read_os_timer();
+            struct simple_profile profile_data;
+            begin_simple_profile(&profile_data, "sem_wait");
             sem_wait(event_loop->semaphore);
-            uint64_t end_time = read_os_timer();
-            double elapsed_time = (double)(end_time - start_time) / timer_freq;
-            printf("PROFILE %s; sem_wait(event_loop->semaphore); %f ms\n", __FUNCTION__, elapsed_time * 1000);
+            end_simple_profile_and_print(&profile_data, __func__);
         }
     }
 
