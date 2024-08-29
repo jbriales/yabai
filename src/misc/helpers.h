@@ -156,7 +156,7 @@ static inline uint64_t read_os_timer(void)
 
 static inline uint64_t read_os_freq(void)
 {
-    return 1000000000;
+    return 1000000000; // 1,000,000,000 Hz
 }
 
 struct rgba_color

@@ -4,6 +4,7 @@
 #if PROFILE >= 1
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
 
 struct profile_anchor
 {
@@ -70,17 +71,22 @@ struct simple_profile
     uint64_t final_timestamp;
 };
 
+time_t get_unix_timestamp() {
+    return time(NULL);  // Get the current Unix timestamp
+    // NOTE: -1 if failed to get the time
+}
+
 static void begin_simple_profile(struct simple_profile *profile, char const *label)
 {
     profile->label = label;
-    profile->start_timestamp = read_cpu_timer();
+    profile->start_timestamp = read_os_timer();
 }
 
 static void end_simple_profile_and_print(struct simple_profile *profile, char const *function_name)
 {
-    profile->final_timestamp = read_cpu_timer();
-    uint64_t timer_freq = read_cpu_freq();
-    printf("PROFILE | %s | %s | %0.4fms\n", function_name, profile->label, 1000.0 * (double)(profile->final_timestamp - profile->start_timestamp) / (double)timer_freq);
+    profile->final_timestamp = read_os_timer();
+    uint64_t timer_freq = read_os_freq();
+    printf("PROFILE | %ld | %0.4fms | %s |  %s \n", get_unix_timestamp(), 1000.0 * (double)(profile->final_timestamp - profile->start_timestamp) / (double)timer_freq, function_name, profile->label);
 }
 
 static void profile_begin(void)
