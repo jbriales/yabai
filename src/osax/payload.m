@@ -26,6 +26,8 @@
 
 #include "common.h"
 
+#include "../misc/timer_minimal.h"
+
 #ifdef __x86_64__
 #include "x86_64/payload.m"
 #elif __arm64__
@@ -1038,6 +1040,9 @@ static void *handle_connection(void *unused)
     pthread_setname_np("handle_connection");
 
     for (;;) {
+        struct simple_profile profile_data;
+        begin_simple_profile(&profile_data, "loop body");
+
         int sockfd = accept(daemon_sockfd, NULL, 0);
         if (sockfd == -1) continue;
 
@@ -1048,6 +1053,8 @@ static void *handle_connection(void *unused)
 
         shutdown(sockfd, SHUT_RDWR);
         close(sockfd);
+
+        end_simple_profile_and_print(&profile_data, __func__);
     }
 
     return NULL;
