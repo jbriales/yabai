@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import plotly.express as px
 
 
 # Check if the file path is provided as a command-line argument
@@ -18,11 +19,15 @@ def parse_profile_line(line):
   # Split the line by the space character
   parts = line.strip().split(' | ')
 
+  function_name = parts[3]
+  label = parts[4]
+
   return dict(
     timestamp_secs = parts[1],
-    duration_ms = float(parts[2].rstrip('ms')),
-    function_name = parts[3],
-    label = parts[4]
+    duration_s = float(parts[2].rstrip('ms')) / 1000,
+    function_name = function_name,
+    label = label,
+    block = f"{function_name} - {label}"
   )
 
 # Open the input file
@@ -35,13 +40,5 @@ with open(file_path, 'r') as file:
 for e in entries:
   print(e)
 
-# # Extract the function names and duration values
-# function_names = [e['function_name'] for e in entries]
-# durations = [e['duration_ms'] for e in entries]
-
-# # Create a boxplot
-# plt.boxplot(durations, labels=function_names)
-# plt.xlabel('Function Name')
-# plt.ylabel('Duration (ms)')
-# plt.title('Boxplot of Duration per Function Name')
-# plt.show()
+fig = px.box(entries, x='block', y='duration_s', labels={'block': 'Block', 'duration_ms': 'Duration (s)'})
+fig.show()
