@@ -28,7 +28,7 @@ def parse_profile_line(line):
 # Open the input file
 with open(file_path, 'r') as file:
   entries = [
-    parse_profile_line(line) for line in file if line.startswith('PROFILE')
+    parse_profile_line(line) for line in file if line.startswith('PROFILE') and line.endswith("END\n")
   ]
 
 # Print the lines
