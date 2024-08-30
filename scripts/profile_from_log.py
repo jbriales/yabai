@@ -10,7 +10,7 @@ import plotly.express as px
 
 # Get the file path from the command-line argument
 # file_path = sys.argv[1]
-file_path = "/Users/jesusbriales/Code/yabai/log"
+file_path = "/Users/jesusbriales/Code/yabai/log_copy"
 
 def parse_profile_line(line):
   # Example line:
