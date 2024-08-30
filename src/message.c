@@ -2944,10 +2944,22 @@ static void *message_loop_run(void *context)
     pthread_setname_np("message_loop");
 
     while (g_message_loop.is_running) {
-        int sockfd = accept(g_message_loop.sockfd, NULL, 0);
+        // TODO: Why is this loop taking long to post subsequent messages?
+        int sockfd;
+        {
+            struct simple_profile profile_data;
+            begin_simple_profile(&profile_data, "accept message from socket");
+            sockfd = accept(g_message_loop.sockfd, NULL, 0);
+            end_simple_profile_and_print(&profile_data, __func__);
+        }
         if (sockfd == -1) continue;
 
-        event_loop_post(&g_event_loop, DAEMON_MESSAGE, NULL, sockfd);
+        {
+            struct simple_profile profile_data;
+            begin_simple_profile(&profile_data, "post DAEMON_MESSAGE");
+            event_loop_post(&g_event_loop, DAEMON_MESSAGE, NULL, sockfd);
+            end_simple_profile_and_print(&profile_data, __func__);
+        }
     }
 
     return NULL;
