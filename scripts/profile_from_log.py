@@ -10,25 +10,27 @@ import plotly.express as px
 
 # Get the file path from the command-line argument
 # file_path = sys.argv[1]
+# cp log log_copy
 file_path = "/Users/jesusbriales/Code/yabai/log_copy"
 
 def parse_profile_line(line):
   # Example line:
   # PROFILE | 1724915018 | 1.9383ms | event_loop_run | loop body
+  
+  try:
+    # Split the line by the space character
+    parts = line.strip().split(' | ')
 
-  # Split the line by the space character
-  parts = line.strip().split(' | ')
-
-  function_name = parts[3]
-  label = parts[4]
-
-  return dict(
-    timestamp_secs = parts[1],
-    duration_s = float(parts[2].rstrip('ms')) / 1000,
-    function_name = function_name,
-    label = label,
-    block = f"{function_name} - {label}"
-  )
+    return dict(
+      timestamp_secs = parts[1],
+      duration_s = float(parts[2].rstrip('ms')) / 1000,
+      function_name = function_name,
+      label = label,
+      block = f"{function_name} - {label}"
+    )
+  except Exception as e:
+    print(f"Issue parsing line: {line}")
+    raise e
 
 # Open the input file
 with open(file_path, 'r') as file:
