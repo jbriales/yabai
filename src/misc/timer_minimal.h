@@ -69,7 +69,8 @@ static void end_simple_profile_and_print(struct simple_profile *profile, char co
 {
     profile->final_timestamp = read_cpu_timer();
     uint64_t timer_freq = read_cpu_freq();
-    printf("PROFILE | %ld | %0.4fms | %s | %s | END\n", get_unix_timestamp(), 1000.0 * (double)(profile->final_timestamp - profile->start_timestamp) / (double)timer_freq, function_name, profile->label);
+    // printf("PROFILE | %ld | %0.4fms | %s | %s | END\n", get_unix_timestamp(), 1000.0 * (double)(profile->final_timestamp - profile->start_timestamp) / (double)timer_freq, function_name, profile->label);
+    printf("PROFILE | %0.4fms | %s | %s | END\n", 1000.0 * (double)(profile->final_timestamp - profile->start_timestamp) / (double)timer_freq, function_name, profile->label);
 }
 
 #endif
